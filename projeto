@@ -1,27 +1,98 @@
 CREATE TABLE Cliente (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT AUTO_INCREMENT PRIMARY KEY,
     Nome VARCHAR(100),
     Endereco VARCHAR(255),
     Telefone VARCHAR(20),
-    Email VARCHAR(100)
-);
-
-CREATE TABLE Membro (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    Cliente_ID INT,
-    FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID),
-    Data_Inscricao DATE,
-    Tipo_Plano VARCHAR(50),
-    Data_Expiracao DATE,
-    Estado_Pagamento ENUM('pago', 'atrasado', 'pendente')
+    Email VARCHAR(100),
+    
 );
 
 CREATE TABLE Pagamento (
     ID INT AUTO_INCREMENT PRIMARY KEY,
-    Membro_ID INT,
-    FOREIGN KEY (Membro_ID) REFERENCES Membro(ID),
+    cliente_id INT,
+    FOREIGN KEY (cliente_id) REFERENCES Cliente(ID),
     Data_Pagamento DATE,
     Valor DECIMAL(10, 2),
-    Metodo_Pagamento VARCHAR(50)
+    Metodo_Pagamento VARCHAR(50),
+    data_nascimento DATE,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabela Instrutores
+CREATE TABLE Instrutores (
+    id_instrutor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    especializacao VARCHAR(100),
+    horarios_disponiveis VARCHAR(255),
+    especializacao VARCHAR(100)
+);
+
+-- Tabela Aulas
+CREATE TABLE Aulas (
+    id_aula INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_aula VARCHAR(100),
+    horario TIME,
+    capacidade_maxima INT
+);
+
+-- Tabela Matriculas
+CREATE TABLE Matriculas (
+    id_matricula INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT,
+    id_aula INT,
+    data_matricula DATE,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id),
+    FOREIGN KEY (id_aula) REFERENCES Aulas(id_aula)
+);
+
+consulta básica
+
+SELECT * FROM Clientes;
+SELECT * FROM Instrutores;
+SELECT * FROM Aulas;
+
+
+Consultas Mais Específicas (Recuperar todas as aulas que um cliente específico está matriculado
+
+SELECT Aulas.*
+FROM Aulas
+INNER JOIN Matriculas ON Aulas.id_aula = Matriculas.id_aula
+WHERE Matriculas.id_cliente = <id_cliente>;
+
+Recuperar o total pago por um cliente específico
+SELECT SUM(valor) AS total_pago
+FROM Pagamentos
+WHERE id_cliente = <id_cliente>;
+
+Recuperar a receita total por mês
+SELECT MONTH(data_pagamento) AS mes, YEAR(data_pagamento) AS ano, SUM(valor) AS receita
+FROM Pagamentos
+GROUP BY mes, ano;
+
+-- Tabela Feedbacks
+CREATE TABLE Feedbacks (
+    id_feedback INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    comentario TEXT,
+    data_feedback DATE,
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+);
+
+Consulta para inserir um novo feedback de um cliente:
+INSERT INTO Feedbacks (id_cliente, comentario, data_feedback) VALUES (<id_cliente>, 'Excelente aula hoje!', CURDATE());
+
+
+-- Tabela Acessos
+CREATE TABLE Acessos (
+    id_acesso INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    data_acesso DATETIME,
+    tipo_acesso ENUM('entrada', 'saida'),
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+);
+
+Consulta para registrar a entrada de um cliente:
+INSERT INTO Acessos (id_cliente, data_acesso, tipo_acesso) VALUES (<id_cliente>, NOW(), 'entrada');
+
+
 
