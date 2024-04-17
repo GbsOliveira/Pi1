@@ -8,7 +8,7 @@ CREATE TABLE Cliente (
 );
 
 CREATE TABLE Pagamento (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
+    pagamento_id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT,
     FOREIGN KEY (cliente_id) REFERENCES Cliente(ID),
     Data_Pagamento DATE,
@@ -51,18 +51,17 @@ SELECT * FROM Clientes;
 SELECT * FROM Instrutores;
 SELECT * FROM Aulas;
 
-
 Consultas Mais Específicas (Recuperar todas as aulas que um cliente específico está matriculado
 
 SELECT Aulas.*
 FROM Aulas
 INNER JOIN Matriculas ON Aulas.id_aula = Matriculas.id_aula
-WHERE Matriculas.id_cliente = <id_cliente>;
+WHERE Matriculas.cliente_id = <cliente_id>;
 
 Recuperar o total pago por um cliente específico
 SELECT SUM(valor) AS total_pago
 FROM Pagamentos
-WHERE id_cliente = <id_cliente>;
+WHERE cliente_id = <cliente_id>;
 
 Recuperar a receita total por mês
 SELECT MONTH(data_pagamento) AS mes, YEAR(data_pagamento) AS ano, SUM(valor) AS receita
@@ -72,27 +71,27 @@ GROUP BY mes, ano;
 -- Tabela Feedbacks
 CREATE TABLE Feedbacks (
     id_feedback INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT,
+    cliente_id INT,
     comentario TEXT,
     data_feedback DATE,
-    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id)
 );
 
 Consulta para inserir um novo feedback de um cliente:
-INSERT INTO Feedbacks (id_cliente, comentario, data_feedback) VALUES (<id_cliente>, 'Excelente aula hoje!', CURDATE());
+INSERT INTO Feedbacks (cliente_id, comentario, data_feedback) VALUES (<cliente_id>, 'Excelente aula hoje!', CURDATE());
 
 
 -- Tabela Acessos
 CREATE TABLE Acessos (
     id_acesso INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT,
+    cliente_id INT,
     data_acesso DATETIME,
     tipo_acesso ENUM('entrada', 'saida'),
-    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id)
 );
 
 Consulta para registrar a entrada de um cliente:
-INSERT INTO Acessos (id_cliente, data_acesso, tipo_acesso) VALUES (<id_cliente>, NOW(), 'entrada');
+INSERT INTO Acessos (cliente_id, data_acesso, tipo_acesso) VALUES (<cliente_id>, NOW(), 'entrada');
 
 
 
