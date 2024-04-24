@@ -1,1 +1,63 @@
+CREATE TABLE Cliente (
+    cliente_id INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100),
+    Endereco VARCHAR(255),
+    Telefone VARCHAR(20),
+    Data_Nascimento DATE,
+    Email VARCHAR(100),
+    data_inscricao DATE,
+    tipo_plano VARCHAR(50),
+    valor_plano DECIMAL(10, 2),
+    estado_pagamento ENUM('Pago', 'Pendente', 'Atrasado')
+    );
 
+--Exemplo de inserção de dados:
+
+INSERT INTO Clientes (nome, telefone, email, endereco, data_inscricao, tipo_plano, valor_plano, estado_pagamento)
+VALUES ('João Silva', '(11) 1234-5678', 'joao@email.com', 'Rua A, 123', '2024-01-15', 'Mensal', 100.00, 'Pago');
+
+-- Retorna todos os clientes e seus estados de pagamento
+
+SELECT nome, estado_pagamento FROM Clientes;
+
+CREATE TABLE Transacoes (
+    transacao_id INT AUTO_INCREMENT PRIMARY KEY,
+    data_transacao DATE,
+    cliente_id INT,
+    descricao VARCHAR(255),
+    valor DECIMAL(10, 2),
+    metodo_pagamento VARCHAR(50),
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id)
+);
+
+Exemplo de inserção de dados:
+INSERT INTO Transacoes (data_transacao, cliente_id, descricao, valor, metodo_pagamento)
+VALUES ('2024-04-24', 1, 'Pagamento da mensalidade', 100.00, 'Cartão de crédito');
+
+-- Retorna todas as transações de um cliente específico
+SELECT * FROM Transacoes WHERE cliente_id = 1;
+
+CREATE TABLE FaturamentoMensal (
+    mes DATE PRIMARY KEY,
+    receita DECIMAL(10, 2),
+    despesa DECIMAL(10, 2),
+    lucro_liquido DECIMAL(10, 2)
+);
+
+INSERT INTO FaturamentoMensal (mes, receita, despesa, lucro_liquido)
+VALUES ('2024-01-01', 5000.00, 3000.00, 2000.00);
+-- Retorna o faturamento do mês de janeiro de 2024
+SELECT * FROM FaturamentoMensal WHERE mes = '2024-01-01';
+
+CREATE TABLE HistoricoPagamentos (
+    pagamento_id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT,
+    data_pagamento DATE,
+    valor DECIMAL(10, 2),
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id)
+);
+
+INSERT INTO HistoricoPagamentos (cliente_id, data_pagamento, valor)
+VALUES (1, '2024-01-10', 100.00);
+-- Retorna o histórico de pagamentos de um cliente específico
+SELECT * FROM HistoricoPagamentos WHERE cliente_id = 1;
